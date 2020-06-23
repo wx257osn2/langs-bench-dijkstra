@@ -7,6 +7,7 @@
 #include<cstdint>
 #include<limits>
 #include"robin_hood.h"
+#include"fast_io.h"
 
 using NodeId = int;
 using NodeIndex = int;
@@ -76,13 +77,10 @@ inline int stof100(std::string_view s) {
 
 void load() {
   std::string line_buf;
-  std::getline(std::cin, line_buf); // skip header
+  scan(fast_io::c_stdin(), line_buf); // skip header
 
-  while (true) {
-    std::getline(std::cin, line_buf);
-    if (std::cin.eof()) {
-      break;
-    }
+  while (true) try{
+    scan(fast_io::c_stdin(), line_buf);
     std::string_view line(line_buf);
     while (!isgraph(line.back())) line.remove_suffix(1); // strip
     const auto pos1 = line.find(',');
@@ -97,7 +95,7 @@ void load() {
     // cerr << "line:" << line << "s:" << s << " e:" << e << " d:" << d << endl;
     // std::this_thread::sleep_for(std::chrono::seconds(1));
     add_edge(s, e, d);
-  }
+  }catch(const fast_io::eof&){break;}
 }
 
 using Visit = std::pair<Distance, NodeIndex>;
@@ -134,7 +132,7 @@ inline std::pair<Distance, std::vector<NodeId>> dijkstra(NodeId start, NodeId en
     }
   }
 
-  std::cerr << "visited: " << visited << std::endl;
+  println(fast_io::c_stderr(), "visited: ", visited);
 
   std::vector<NodeId> result;
   NodeIndex n = e;
@@ -150,25 +148,22 @@ inline std::pair<Distance, std::vector<NodeId>> dijkstra(NodeId start, NodeId en
 }
 
 int main(int argc, char **argv) {
-  std::ios::sync_with_stdio(false);
-  std::cin.tie(nullptr);
-
   const int count = atoi(argv[1]);
   is_debug = argc > 2 && std::string_view(argv[2]) == "debug";
 
   load();
-  std::cerr << "loaded nodes: " << g.idx << std::endl;
+  println(fast_io::c_stderr(), "loaded nodes: ", g.idx);
 
   std::pair<Distance, std::vector<NodeId>> result;
   for (int i=0; i<count; i++) {
     const NodeId s = g.idx2id[(i+1) * 1000];
     result = dijkstra(s, g.idx2id[1]);
-    std::cout << "distance: " << result.first << std::endl;
+    println(fast_io::c_stdout(), "distance: ", result.first);
   }
 
-  std::cout << "route: ";
+  print(fast_io::c_stdout(), "route: ");
   for (const NodeId id: result.second) {
-    std::cout << id << " ";
+    print(fast_io::c_stdout(), id, " ");
   }
-  std::cout << std::endl;
+  println(fast_io::c_stdout());
 }
