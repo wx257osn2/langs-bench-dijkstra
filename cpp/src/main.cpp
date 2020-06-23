@@ -7,7 +7,15 @@
 #include<cstdint>
 #include<limits>
 #include"robin_hood.h"
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#pragma GCC diagnostic ignored "-Wparentheses"
+#endif
 #include"fast_io.h"
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 using NodeId = int;
 using NodeIndex = int;
